@@ -25,6 +25,7 @@ contract AirdropContract {
     }
 
     function setMerkleRoot(string memory _merkleRoot) public onlyOwner  {
+            emit MerkleChanged(merkleRoot,_merkleRoot);
             merkleRoot = _merkleRoot;
     }
 }
