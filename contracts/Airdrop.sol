@@ -1,14 +1,30 @@
 //SPDX-License-Identifier: Unlicense
 pragma solidity ^0.8.0;
 
-import "hardhat/console.sol";
+// import "hardhat/console.sol";
 
 contract AirdropContract {
-    // define merkle root variable
-    // setMerkleRoot function - only admin can call
-    // constructor - merkle root will be set here, also owner
-    // GETTER - get merkle root
+    address public owner;
+    string merkleRoot;
+
+    constructor(string memory _merkleRoot) {
+        owner = msg.sender;
+        merkleRoot = _merkleRoot;
+    }
+    
     // event call - when merkle root is changed 
+    event MerkleChanged(string oldMerkle,string newMerkle);
 
+    modifier onlyOwner {
+        require(owner == msg.sender);
+        _;
+    }
 
+    function getMerkleRoot() view public returns(string memory) {
+        return merkleRoot;
+    }
+
+    function setMerkleRoot(string memory _merkleRoot) public onlyOwner  {
+            merkleRoot = _merkleRoot;
+    }
 }
