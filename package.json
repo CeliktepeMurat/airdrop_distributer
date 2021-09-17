@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "An airdrop contract to distribute tokens through merkle tree.",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
