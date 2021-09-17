@@ -5,27 +5,27 @@ pragma solidity ^0.8.0;
 
 contract AirdropContract {
     address public owner;
-    string merkleRoot;
+    bytes32 merkleRoot;
 
-    constructor(string memory _merkleRoot) {
+    constructor(bytes32 _merkleRoot) {
         owner = msg.sender;
         merkleRoot = _merkleRoot;
     }
     
     // event call - when merkle root is changed 
-    event MerkleChanged(string oldMerkle,string newMerkle);
+    event MerkleChanged(bytes32 newMerkle);
 
     modifier onlyOwner {
         require(owner == msg.sender);
         _;
     }
 
-    function getMerkleRoot() view public returns(string memory) {
+    function getMerkleRoot() view external returns(bytes32 ) {
         return merkleRoot;
     }
 
-    function setMerkleRoot(string memory _merkleRoot) public onlyOwner  {
-            emit MerkleChanged(merkleRoot,_merkleRoot);
+    function _setMerkleRoot(bytes32 _merkleRoot) external onlyOwner  {
             merkleRoot = _merkleRoot;
+            emit MerkleChanged(merkleRoot);
     }
 }
