@@ -28,4 +28,10 @@ contract AirdropContract {
             merkleRoot = _merkleRoot;
             emit MerkleChanged(merkleRoot);
     }
+
+    // Verify function 
+    // @params _proof as calldata
+    // verifys msg.sender is in the tree or not
+    // emit verify event
+    
 }
