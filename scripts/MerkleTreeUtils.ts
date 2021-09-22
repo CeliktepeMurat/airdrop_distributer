@@ -2,8 +2,6 @@ import { MerkleTree } from 'merkletreejs';
 import SHA256 from 'crypto-js/sha256';
 import accounts from '../utils/accounts.json';
 
-export const ADDRESS: string = process.argv.slice(2)[0]; // get address from command line
-
 // build merkle tree
 // export tree and merkle root
 export const getMerkleTree = () => {
@@ -25,18 +23,3 @@ export const getProof = (_address: string) => {
 
   return proof;
 };
-
-// return merkle proof and ROOT
-const getMerkleProofandRoot = () => {
-  const tree = getMerkleTree();
-  const root = getMerkleRoot(tree);
-
-  const leaf: any = SHA256(ADDRESS);
-  const proof = tree.getHexProof(leaf);
-
-  console.log(`Merkle Root ->`, root);
-  console.log(`Proof ->`, proof);
-  console.log(`Leaf ->`, leaf);
-};
-
-getMerkleProofandRoot();

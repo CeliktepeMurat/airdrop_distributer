@@ -1,31 +1,24 @@
 import { expect } from 'chai';
 import { ethers } from 'hardhat';
-import {
-  getMerkleRoot,
-  getMerkleTree,
-  getProof,
-  ADDRESS,
-} from '../scripts/getMerkleProof';
+import { getMerkleRoot, getMerkleTree } from '../scripts/MerkleTreeUtils';
 
-describe('Greeter', function () {
+describe('Airdrop Contract', () => {
+  let addr1: any, addr2: any, addr3: any;
+  let Contract: any;
+
+  const merkleTree = getMerkleTree();
+  const root = getMerkleRoot(merkleTree);
+
+  beforeEach(async () => {
+    [addr1, addr2, addr3] = await ethers.getSigners(); // addr3 is for the address that not in the tree
+    const Airdrop = await ethers.getContractFactory('AirdropContract');
+
+    Contract = await Airdrop.connect(addr1).deploy(root);
+  });
+
   it("Should return the new greeting once it's changed", async function () {
-    const Airdrop = await ethers.getContractFactory('Airdrop');
-    const airdrop = await Airdrop.deploy('Airdrop contract deployed');
-    await airdrop.deployed();
-    const merkleTree = getMerkleTree();
-    const proof = getProof();
+    await Contract.setMerkleRoot(root);
 
-    const merkleRoot = airdrop.getMerkleRoot();
-
-    await merkleRoot.wait();
-
-    const setMerkleRootTx = await airdrop.setMerkleRoot(
-      getMerkleRoot(merkleTree)
-    );
-
-    // wait until the transaction is mined
-    await setMerkleRootTx.wait();
-
-    expect(await airdrop.verify(proof, ADDRESS)).to.equal(merkleRoot);
+    expect(await Contract.getMerkleRoot()).to.equal(root);
   });
 });
