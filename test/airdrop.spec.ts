@@ -1,19 +1,31 @@
-import { expect } from 'chai'
-import { ethers } from 'hardhat'
+import { expect } from 'chai';
+import { ethers } from 'hardhat';
+import {
+  getMerkleRoot,
+  getMerkleTree,
+  getProof,
+  ADDRESS,
+} from '../scripts/getMerkleProof';
 
 describe('Greeter', function () {
   it("Should return the new greeting once it's changed", async function () {
-    /*     const Greeter = await ethers.getContractFactory('Greeter')
-    const greeter = await Greeter.deploy('Hello, world!')
-    await greeter.deployed()
+    const Airdrop = await ethers.getContractFactory('Airdrop');
+    const airdrop = await Airdrop.deploy('Airdrop contract deployed');
+    await airdrop.deployed();
+    const merkleTree = getMerkleTree();
+    const proof = getProof();
 
-    expect(await greeter.greet()).to.equal('Hello, world!')
+    const merkleRoot = airdrop.getMerkleRoot();
 
-    const setGreetingTx = await greeter.setGreeting('Hola, mundo!')
+    await merkleRoot.wait();
+
+    const setMerkleRootTx = await airdrop.setMerkleRoot(
+      getMerkleRoot(merkleTree)
+    );
 
     // wait until the transaction is mined
-    await setGreetingTx.wait()
+    await setMerkleRootTx.wait();
 
-    expect(await greeter.greet()).to.equal('Hola, mundo!') */
-  })
-})
+    expect(await airdrop.verify(proof, ADDRESS)).to.equal(merkleRoot);
+  });
+});
