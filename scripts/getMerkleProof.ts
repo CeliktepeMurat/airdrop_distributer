@@ -1,24 +1,34 @@
-import { MerkleTree } from "merkletreejs";
-import SHA256 from "crypto-js/sha256";
-import accounts from "../utils/accounts.json";
+import { MerkleTree } from 'merkletreejs';
+import SHA256 from 'crypto-js/sha256';
+import accounts from '../utils/accounts.json';
 
-const leaves = accounts.map((account) => SHA256(account));
-
-const tree = new MerkleTree(leaves, SHA256);
-const root = tree.getRoot().toString("hex");
-const leaf: any = SHA256(
-  "0xca978112ca1bbdcafac231b39a23dc4da786eff8147c4e72b9807785afee48bb"
-);
-
-const proof = tree.getProof(leaf);
-console.log(tree.verify(proof, leaf, root)); // true
+const ADDRESS: string = process.argv.slice(2)[0]; // get address from command line
 
 // build merkle tree
 // export tree and merkle root
-export const getMerkleTree = () => {};
+export const getMerkleTree = () => {
+  const leaves = accounts.map((account) => SHA256(account));
 
-// return merkle proof for specific leaf
-export const getMerkleProof = (leaf: any) => {};
+  const tree = new MerkleTree(leaves, SHA256);
+  return tree;
+};
 
 // returns merkle root for a tree
-export const getMerkleRoot = (tree: any) => {};
+export const getMerkleRoot = (tree: any) => {
+  const root = tree.getRoot().toString('hex');
+  return root;
+};
+
+// return merkle proof and ROOT
+const getMerkleProofandRoot = () => {
+  const tree = getMerkleTree();
+  const root = getMerkleRoot(tree);
+
+  const leaf: any = SHA256(ADDRESS);
+  const proof = tree.getHexProof(leaf);
+
+  console.log(`Merkle Root ->`, root);
+  console.log(`Proof ->`, proof);
+};
+
+getMerkleProofandRoot();
