@@ -1,12 +1,14 @@
 //SPDX-License-Identifier: Unlicense
 pragma solidity ^0.8.0;
 import '@openzeppelin/contracts/utils/cryptography/MerkleProof.sol';
-
-// import "hardhat/console.sol";
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 contract AirdropContract {
+    IERC20 Token;
+    
     address public owner;
     bytes32 merkleRoot;
+    uint256 TokenAmount = 100;
 
     constructor() {
         owner = msg.sender;
@@ -29,13 +31,18 @@ contract AirdropContract {
         emit MerkleChanged(merkleRoot);
     }
 
-    // Verify function 
-    // @params _proof as calldata
-    // verifys msg.sender is in the tree or not
-    // emit verify event
-
     function verify(bytes32[] calldata _proof) external view returns (bool) {
         bytes32 leaf = keccak256(abi.encode(msg.sender));
         return MerkleProof.verify(_proof, merkleRoot, leaf);
     } 
+
+    // call verify function and require it returns true
+    // if user is in the tree, call _transfer method and transfer TokenAmount to the user
+    // emit transfer event in _transfer function
+    function claim() external{
+        
+    }
+    function _transfer(address _to, uint256 _amount) internal {
+        Token.transferFrom(address(this),_to,_amount);
+    }
 }
