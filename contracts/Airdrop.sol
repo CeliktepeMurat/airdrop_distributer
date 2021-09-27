@@ -25,8 +25,8 @@ contract AirdropContract {
     }
 
     function setMerkleRoot(bytes32 _merkleRoot) external onlyOwner  {
-            merkleRoot = _merkleRoot;
-            emit MerkleChanged(merkleRoot);
+        merkleRoot = _merkleRoot;
+        emit MerkleChanged(merkleRoot);
     }
 
     // Verify function 

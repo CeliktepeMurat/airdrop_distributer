@@ -1,4 +1,4 @@
-/* import { ethers } from 'hardhat'
+import { ethers } from 'hardhat';
 
 async function main() {
   // Hardhat always runs the compile task when running scripts with its command
@@ -8,13 +8,13 @@ async function main() {
   // manually to make sure everything is compiled
   // await hre.run('compile');
 
-  // We get the contract to deploy
-  const Greeter = await ethers.getContractFactory('Greeter')
-  const greeter = await Greeter.deploy('Hello, Hardhat!')
+  //We get the contract to deploy
+  const Airdrop = await ethers.getContractFactory('Airdrop');
+  const airdrop = await Airdrop.deploy('Hello, Hardhat!');
 
-  await greeter.deployed()
+  await airdrop.deployed();
 
-  console.log('Greeter deployed to:', greeter.address)
+  console.log('Airdrop deployed to:', airdrop.address);
 }
 
 // We recommend this pattern to be able to use async/await everywhere
@@ -22,7 +22,6 @@ async function main() {
 main()
   .then(() => process.exit(0))
   .catch((error) => {
-    console.error(error)
-    process.exit(1)
-  })
- */
+    console.error(error);
+    process.exit(1);
+  });
