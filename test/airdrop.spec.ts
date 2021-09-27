@@ -1,31 +1,47 @@
 import { expect } from 'chai';
 import { ethers } from 'hardhat';
-import {
-  getMerkleRoot,
-  getMerkleTree,
-  getProof,
-  ADDRESS,
-} from '../scripts/getMerkleProof';
+import { getProof } from '../scripts/getMerkleProof';
+import { getMerkleRoot, getMerkleTree } from '../scripts/MerkleTreeUtils';
 
-describe('Greeter', function () {
+describe('Airdrop Contract', () => {
+  let addr1: any, addr2: any, addr3: any;
+  let Contract: any;
+
+  const merkleTree = getMerkleTree();
+  const root = getMerkleRoot(merkleTree);
+
+  beforeEach(async () => {
+    [addr1, addr2, addr3] = await ethers.getSigners(); // addr3 is for the address that not in the tree
+    const Airdrop = await ethers.getContractFactory('AirdropContract');
+
+    Contract = await Airdrop.connect(addr1).deploy(root);
+  });
+
   it("Should return the new greeting once it's changed", async function () {
-    const Airdrop = await ethers.getContractFactory('Airdrop');
-    const airdrop = await Airdrop.deploy('Airdrop contract deployed');
-    await airdrop.deployed();
-    const merkleTree = getMerkleTree();
-    const proof = getProof();
+    await Contract.setMerkleRoot(root);
 
-    const merkleRoot = airdrop.getMerkleRoot();
+    expect(await Contract.getMerkleRoot()).to.equal(root);
+  });
 
-    await merkleRoot.wait();
+  //Verify function
 
-    const setMerkleRootTx = await airdrop.setMerkleRoot(
-      getMerkleRoot(merkleTree)
-    );
+  it('It should return true if addr1 and addr2 used, false when addr3 is used', async function () {
+    const proof1 = getProof(addr1);
+    const proof2 = getProof(addr2);
+    // const proof3 = getProof(addr3);
 
-    // wait until the transaction is mined
-    await setMerkleRootTx.wait();
+    await Contract.setMerkleRoot(root);
 
-    expect(await airdrop.verify(proof, ADDRESS)).to.equal(merkleRoot);
+    const verify1 = await Contract.verify(proof1);
+    console.log(verify1);
+    // expect(verify1).to.be.equal(true);
+
+    const verify2 = await Contract.verify(proof2);
+    // expect(verify2).to.be.equal(true);
+    console.log(verify2);
+
+    const verify3 = await Contract.connect(addr3).verify(proof2);
+    // expect(verify3).to.be.equal(false);
+    console.log(verify3);
   });
 });

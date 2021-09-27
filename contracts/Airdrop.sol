@@ -25,9 +25,9 @@ contract AirdropContract {
         return merkleRoot;
     }
 
-    function _setMerkleRoot(bytes32 _merkleRoot) external onlyOwner  {
-            merkleRoot = _merkleRoot;
-            emit MerkleChanged(merkleRoot);
+    function setMerkleRoot(bytes32 _merkleRoot) external onlyOwner  {
+        merkleRoot = _merkleRoot;
+        emit MerkleChanged(merkleRoot);
     }
 
     // Verify function 
@@ -35,8 +35,8 @@ contract AirdropContract {
     // verifys msg.sender is in the tree or not
     // emit verify event
 
-    function verify(bytes32[] calldata _proof, bytes32 _merkleRoot) external view returns (bool) {
+    function verify(bytes32[] calldata _proof) external view returns (bool) {
         bytes32 leaf = keccak256(abi.encode(msg.sender));
-        return MerkleProof.verify(_proof, _merkleRoot, leaf);
+        return MerkleProof.verify(_proof, merkleRoot ,leaf);
     } 
 }
