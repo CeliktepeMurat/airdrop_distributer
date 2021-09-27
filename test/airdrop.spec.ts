@@ -66,6 +66,50 @@ describe('Airdrop Contract', () => {
     expect(await Contract.connect(addr1).verify(proof)).to.equal(true);
   });
 
+  it('should revert if wrong address try to call', async () => {
+    const whitelist = [
+      {
+        address: addr1.address,
+      },
+      {
+        address: addr2.address,
+      },
+    ].map((item) => encodeMessage(item));
+
+    const tree = buildMerkleTree(whitelist);
+    const root = getMerkleRoot(tree);
+
+    await Contract.setMerkleRoot(root);
+
+    const proof = getProofForLeaf(
+      tree,
+      encodeMessage({ address: addr1.address })
+    );
+    expect(await Contract.connect(addr3).verify(proof)).to.equal(false);
+  });
+
+  it('should revert if wrong proof pass', async () => {
+    const whitelist = [
+      {
+        address: addr1.address,
+      },
+      {
+        address: addr2.address,
+      },
+    ].map((item) => encodeMessage(item));
+
+    const tree = buildMerkleTree(whitelist);
+    const root = getMerkleRoot(tree);
+
+    await Contract.setMerkleRoot(root);
+
+    const proof = getProofForLeaf(
+      tree,
+      encodeMessage({ address: addr3.address })
+    );
+    expect(await Contract.connect(addr3).verify(proof)).to.equal(false);
+  });
+
   it('only admin can call setMerkleRoot', async function () {
     const testRoot =
       '0x9026d8a85fee65817561c5d02b985f4e34a8f70d19b21f5382e13c646a71176b';
