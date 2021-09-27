@@ -16,6 +16,7 @@ contract AirdropContract {
     
     // event call - when merkle root is changed 
     event MerkleChanged(bytes32 newMerkle);
+    event Transfer(address to , uint amount);
 
     modifier onlyOwner {
         require(owner == msg.sender,'Only admin can call');
@@ -31,7 +32,7 @@ contract AirdropContract {
         emit MerkleChanged(merkleRoot);
     }
 
-    function verify(bytes32[] calldata _proof) external view returns (bool) {
+    function verify(bytes32[] calldata _proof) internal view returns (bool) {
         bytes32 leaf = keccak256(abi.encode(msg.sender));
         return MerkleProof.verify(_proof, merkleRoot, leaf);
     } 
@@ -39,10 +40,12 @@ contract AirdropContract {
     // call verify function and require it returns true
     // if user is in the tree, call _transfer method and transfer TokenAmount to the user
     // emit transfer event in _transfer function
-    function claim() external{
-        
+    function claim(bytes32[] calldata _proof) external{
+        require(verify(_proof),'Sender is not eligible to claim');
+        _transfer(msg.sender,100);
     }
     function _transfer(address _to, uint256 _amount) internal {
         Token.transferFrom(address(this),_to,_amount);
+        emit Transfer(_to,_amount);
     }
 }
