@@ -65,4 +65,12 @@ describe('Airdrop Contract', () => {
     );
     expect(await Contract.connect(addr1).verify(proof)).to.equal(true);
   });
+
+  it('only admin can call setMerkleRoot', async function () {
+    const testRoot =
+      '0x9026d8a85fee65817561c5d02b985f4e34a8f70d19b21f5382e13c646a71176b';
+    await expect(
+      Contract.connect(addr2).setMerkleRoot(testRoot)
+    ).to.be.revertedWith('Only admin can call');
+  });
 });

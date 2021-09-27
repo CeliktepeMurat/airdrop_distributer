@@ -16,7 +16,7 @@ contract AirdropContract {
     event MerkleChanged(bytes32 newMerkle);
 
     modifier onlyOwner {
-        require(owner == msg.sender);
+        require(owner == msg.sender,'Only admin can call');
         _;
     }
 
