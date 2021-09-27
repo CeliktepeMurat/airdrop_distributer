@@ -1,17 +1,25 @@
 //SPDX-License-Identifier: Unlicense
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.4;
 import '@openzeppelin/contracts/utils/cryptography/MerkleProof.sol';
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import '@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol';
+import '@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol';
 
-contract AirdropContract {
-    IERC20 Token;
+
+
+contract AirdropContract   {
+    using SafeERC20 for IERC20Metadata;
+    IERC20Metadata Token;
+
+
     
     address public owner;
     bytes32 merkleRoot;
     uint256 TokenAmount = 100;
 
-    constructor() {
+    constructor(IERC20Metadata token) {
         owner = msg.sender;
+        Token = token;
     }
     
     // event call - when merkle root is changed 
@@ -32,7 +40,7 @@ contract AirdropContract {
         emit MerkleChanged(merkleRoot);
     }
 
-    function verify(bytes32[] calldata _proof) internal view returns (bool) {
+    function verify(bytes32[] calldata _proof) public view returns (bool) {
         bytes32 leaf = keccak256(abi.encode(msg.sender));
         return MerkleProof.verify(_proof, merkleRoot, leaf);
     } 
@@ -44,8 +52,8 @@ contract AirdropContract {
         require(verify(_proof),'Sender is not eligible to claim');
         _transfer(msg.sender,100);
     }
-    function _transfer(address _to, uint256 _amount) internal {
-        Token.transferFrom(address(this),_to,_amount);
+    function _transfer(address _to, uint256 _amount) internal  {
+        Token.transfer(_to,_amount);
         emit Transfer(_to,_amount);
     }
 }
