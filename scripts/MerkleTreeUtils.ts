@@ -1,25 +1,18 @@
 import { MerkleTree } from 'merkletreejs';
-import SHA256 from 'crypto-js/sha256';
-import accounts from '../utils/accounts.json';
+import ethUtil from 'ethereumjs-util';
 
-// build merkle tree
-// export tree and merkle root
-export const getMerkleTree = () => {
-  const leaves = accounts.map((account) => SHA256(account));
+import keccak256 from 'keccak256';
 
-  const tree = new MerkleTree(leaves, SHA256);
-  return tree;
+export const buildMerkleTree = (leaves: any) => {
+  const hasedhLeaves = leaves.map((leaf: any) => keccak256(leaf));
+
+  return new MerkleTree(hasedhLeaves, keccak256, { sortPairs: true });
 };
 
-// returns merkle root for a tree
 export const getMerkleRoot = (tree: any) => {
   return tree.getHexRoot();
 };
 
-export const getProof = (_address: string) => {
-  const tree = getMerkleTree();
-  const leaf: any = SHA256(_address);
-  const proof = tree.getHexProof(leaf);
-
-  return proof;
+export const getProofForLeaf = (tree: any, leaf: any) => {
+  return tree.getHexProof(keccak256(leaf));
 };

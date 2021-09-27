@@ -8,9 +8,8 @@ contract AirdropContract {
     address public owner;
     bytes32 merkleRoot;
 
-    constructor(bytes32 _merkleRoot) {
+    constructor() {
         owner = msg.sender;
-        merkleRoot = _merkleRoot;
     }
     
     // event call - when merkle root is changed 
@@ -35,8 +34,8 @@ contract AirdropContract {
     // verifys msg.sender is in the tree or not
     // emit verify event
 
-    function verify(bytes32[] calldata _proof, bytes32 _merkleRoot) external view returns (bool) {
+    function verify(bytes32[] calldata _proof) external view returns (bool) {
         bytes32 leaf = keccak256(abi.encode(msg.sender));
-        return MerkleProof.verify(_proof, _merkleRoot, leaf);
+        return MerkleProof.verify(_proof, merkleRoot, leaf);
     } 
 }
